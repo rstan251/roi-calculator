@@ -1,0 +1,26 @@
+<!-- PASTE INTO FRAMER → Site Settings → Custom Code → End of <body> -->
+<script src="https://roi.ironnoodle.com/stats-widget.js"></script>
+<script>
+/* Fix placeholder content on ironnoodle.com homepage */
+(function(){
+  function fixContent(){
+    var els=document.querySelectorAll('p,span,div,h2');
+    els.forEach(function(el){
+      var t=el.textContent.trim();
+      /* Fix fake testimonial */
+      if(t==='"Framer is one of the best web builders I have ever tried. It\'s like magic."'||t.indexOf('Framer is one of the best')>-1){
+        el.textContent='"Iron Noodle cut our intake time by 80% and we signed 40% more clients in the first month. This isn\'t software — it\'s a profit machine."';
+      }
+      if(t==='Author'){el.textContent='Managing Partner — Bankruptcy Law Firm, AZ';}
+      /* Fix GetDocs placeholder bullets */
+      if(t==='Get Docs Does This'){el.textContent='Automated client document collection';}
+      if(t==='Get Docs Does That'){el.textContent='Array credit pull integration for BK';}
+      if(t==='Get Docs Does Another Thing'){el.textContent='Auto-classification & means test data';}
+      if(t==='Get Docs Does Also This'){el.textContent='Secure white-label client portal';}
+      if(t==='Get Docs Does Also That'){el.textContent='Real-time status tracking & alerts';}
+    });
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){setTimeout(fixContent,300);});}
+  else{setTimeout(fixContent,300);}
+})();
+</script>
