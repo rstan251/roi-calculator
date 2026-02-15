@@ -1,16 +1,22 @@
 {
-  "updated": "2026-02-14T20:48:00Z",
+  "updated": "2026-02-15T04:04:06.310Z",
   "metrics": {
     "firms_automated": 9,
     "firms_label": "DEALS WON",
     "revenue_gain": 390318,
     "revenue_label": "PIPELINE VALUE",
-    "products_live": 6,
+    "products_live": 10,
     "products_label": "AI PRODUCTS"
   },
   "detail": {
-    "closed_won": { "count": 9, "value": 20704 },
-    "active_pipeline": { "count": 74, "value": 390318 },
+    "closed_won": {
+      "count": 9,
+      "value": 20704
+    },
+    "active_pipeline": {
+      "count": 74,
+      "value": 390318
+    },
     "unique_firms": 34,
     "total_contacts": 107,
     "products_in_catalog": 10
