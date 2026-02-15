@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">ROI Calculator — NB OS by Iron Noodle Technologies</title>
+    <meta name="description" content="Calculate your bankruptcy law firm's ROI with NB OS — AI-powered intake, voice agents, and document collection. See projected savings in seconds.">
+    <meta property="og:title" content="NB OS ROI Calculator — Profit Engineering for Lawyers">
+    <meta property="og:description" content="How much is your firm losing to slow intake, missed calls, and manual doc collection? Find out in 60 seconds.">
+    <meta property="og:type" content="website">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='10' y='20' width='80' height='60' rx='14' fill='%230A1EF5'/%3E%3Crect x='16' y='26' width='68' height='48' rx='10' fill='white'/%3E%3Cellipse cx='38' cy='46' rx='9' ry='12' fill='%230A1EF5'/%3E%3Cellipse cx='62' cy='46' rx='9' ry='12' fill='%230A1EF5'/%3E%3C/svg%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --true-blue: #0A1EF5;
+            --soft-linen: #E8E2DA;
+            --carbon-black: #191718;
+            --stormy-teal: #1B6D69;
+            --celadon: #7CCCA0;
+            --white: #FFFFFF;
+            --light-gray: #F5F3F0;
+            --border-color: rgba(10, 30, 245, 0.1);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body { font-family: 'Inter', sans-serif; color: var(--carbon-black); background: var(--soft-linen); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+        h1, h2, h3, h4 { font-family: 'Oswald', sans-serif; font-weight: 600; line-height: 1.2; letter-spacing: 0.02em; }
+        h1 { font-size: 3.75rem; }
+        h2 { font-size: 2.625rem; }
+        h3 { font-size: 1.7rem; }
+        p { margin-bottom: 1rem; }
+        a { color: var(--true-blue); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+
+        .nav { background: var(--true-blue); padding: 0.75rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+        .nav-brand { display: flex; align-items: center; gap: 0.75rem; color: var(--white); font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 1.25rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .nav-links { display: flex; gap: 0.25rem; }
+        .nav-links a { color: rgba(255,255,255,0.8); padding: 0.5rem 1rem; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--white); background: rgba(255,255,255,0.15); opacity: 1; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+        .section { padding: 5rem 0; }
+        .section-blue { background: var(--true-blue); color: var(--white); }
+        .section-blue h2, .section-blue p { color: var(--white); }
+        .btn { display: inline-block; padding: 0.85rem 2rem; border-radius: 8px; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; border: none; transition: all 0.2s; text-align: center; }
+        .btn-white { background: var(--white); color: var(--true-blue); }
+        .btn-white:hover { background: #f0f0f0; opacity: 1; }
+        .btn-primary { background: var(--true-blue); color: var(--white); }
+        .btn-primary:hover { background: #0818CC; opacity: 1; }
+        .btn-lg { padding: 1.1rem 2.5rem; font-size: 1.15rem; }
+
+        .slider-group { margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .slider-group:last-of-type { border-bottom: none; }
+        .slider-group label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; }
+        .slider-group label .slider-hint { font-weight: 400; font-size: 0.75rem; color: #999; display: block; margin-top: 0.15rem; }
+        .slider-value { font-family: 'Oswald', sans-serif; font-weight: 600; color: var(--true-blue); font-size: 1.1rem; }
+        input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: #ddd; outline: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--true-blue); cursor: pointer; border: 3px solid var(--white); box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+        input[type="range"]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--true-blue); cursor: pointer; border: 3px solid var(--white); box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+        input[type="range"]:focus::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(10, 30, 245, 0.2), 0 2px 6px rgba(0,0,0,0.2); }
+        .slider-range-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: #bbb; margin-top: 0.2rem; }
+
+        .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start; }
+        .calc-inputs { background: var(--white); border-radius: 16px; padding: 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.07); }
+        .calc-results { position: sticky; top: 80px; }
+        .calc-inputs h3 { margin-bottom: 0.25rem; color: var(--true-blue); font-size: 1.4rem; }
+        .calc-inputs .subtitle { color: #888; font-size: 0.85rem; margin-bottom: 1.75rem; display: block; }
+
+        .result-card { background: var(--white); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 0.75rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; transition: transform 0.15s, box-shadow 0.15s; }
+        .result-card:hover { transform: translateX(4px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+        .result-card .result-label { font-size: 0.85rem; font-weight: 500; color: #666; }
+        .result-card .result-value { font-family: 'Oswald', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--carbon-black); }
+        .result-card.highlight { border-left: 4px solid var(--celadon); background: linear-gradient(135deg, #f0fdf4, var(--white)); }
+        .result-card.highlight .result-value { color: var(--stormy-teal); }
+        .result-card.warning { border-left: 4px solid #e74c3c; }
+        .result-card.warning .result-value { color: #c0392b; }
+        .result-card.primary { border-left: 4px solid var(--true-blue); }
+        .result-card.primary .result-value { color: var(--true-blue); }
+        .result-card.nbos-cost { border-left: 4px solid var(--stormy-teal); background: rgba(27, 109, 105, 0.04); }
+
+        .chart-wrap { background: var(--white); border-radius: 16px; padding: 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.07); margin-top: 3rem; }
+        .chart-wrap h3 { margin-bottom: 1rem; color: var(--true-blue); }
+        .chart-container { position: relative; height: 360px; }
+
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-top: 2.5rem; }
+        .summary-card { text-align: center; padding: 2rem 1rem; background: var(--white); border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); position: relative; overflow: hidden; }
+        .summary-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+        .summary-card:nth-child(1)::before { background: var(--celadon); }
+        .summary-card:nth-child(2)::before { background: var(--stormy-teal); }
+        .summary-card:nth-child(3)::before { background: var(--true-blue); }
+        .summary-card:nth-child(4)::before { background: var(--celadon); }
+        .summary-number { font-family: 'Oswald', sans-serif; font-size: 2.75rem; font-weight: 700; line-height: 1; margin-bottom: 0.5rem; }
+        .summary-card:nth-child(1) .summary-number { color: var(--celadon); }
+        .summary-card:nth-child(2) .summary-number { color: var(--stormy-teal); }
+        .summary-card:nth-child(3) .summary-number { color: var(--true-blue); }
+        .summary-card:nth-child(4) .summary-number { color: var(--celadon); }
+        .summary-label { font-size: 0.8rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.06em; }
+
+        .divider-label { font-family: 'Oswald', sans-serif; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--stormy-teal); margin-top: 1.75rem; margin-bottom: 1rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--stormy-teal); font-weight: 600; }
+        .reset-btn { display: inline-flex; align-items: center; gap: 0.4rem; background: transparent; border: 1px solid rgba(0,0,0,0.15); color: #888; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; margin-bottom: 1.5rem; }
+        .reset-btn:hover { border-color: var(--true-blue); color: var(--true-blue); background: rgba(10, 30, 245, 0.03); }
+        .page-header { text-align: center; padding: 3.5rem 0 2rem; }
+        .page-header h1 { margin-bottom: 0.5rem; }
+        .page-header p { font-size: 1.15rem; color: #777; max-width: 600px; margin: 0 auto; }
+        .cta-section { text-align: center; padding: 4rem 0; }
+        .cta-section h2 { margin-bottom: 1.25rem; }
+
+        @media (max-width: 900px) {
+            .calc-grid { grid-template-columns: 1fr; }
+            .calc-results { position: static; }
+            .summary-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .container { padding: 0 1.25rem; }
+            .section { padding: 3rem 0; }
+            .nav { padding: 0.5rem 1rem; }
+            .nav-links { display: none; }
+        }
+        @media (max-width: 550px) {
+            .summary-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+            .summary-number { font-size: 2rem; }
+            .chart-container { height: 260px; }
+        }
+        @media print {
+            .nav, .no-print { display: none !important; }
+            body { background: white; font-size: 11pt; }
+            .section { padding: 1rem 0; page-break-inside: avoid; }
+            .section-blue { background: white !important; color: black !important; }
+            .section-blue h2, .section-blue p { color: black !important; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══ NAV — dynamic: shows proposal links when ?proposal= param present ═══ -->
+<nav class="nav">
+    <div class="nav-brand">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:36px;height:36px"><rect x="10" y="20" width="80" height="60" rx="14" fill="#0A1EF5"/><rect x="16" y="26" width="68" height="48" rx="10" fill="white"/><ellipse cx="38" cy="46" rx="9" ry="12" fill="#0A1EF5"/><ellipse cx="62" cy="46" rx="9" ry="12" fill="#0A1EF5"/><ellipse cx="41" cy="42" rx="3" ry="4" fill="white" opacity="0.7"/><ellipse cx="65" cy="42" rx="3" ry="4" fill="white" opacity="0.7"/><path d="M38 60 Q50 70 62 60" stroke="#0A1EF5" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="0" y="36" width="14" height="24" rx="7" fill="#1B6D69"/><rect x="86" y="36" width="14" height="24" rx="7" fill="#1B6D69"/><path d="M7 36 Q7 10 50 10 Q93 10 93 36" stroke="#1B6D69" stroke-width="6" fill="none"/><circle cx="50" cy="6" r="6" fill="#7CCCA0"/></svg>
+        <span>NB OS</span>
+        <span id="navFirmLabel" style="opacity:0.5;font-weight:400;font-size:0.6rem;letter-spacing:0.02em">by Iron Noodle</span>
+    </div>
+    <div class="nav-links" id="navLinks">
+        <!-- Populated by JS: proposal links if ?proposal= present, otherwise generic -->
+    </div>
+</nav>
+
+<!-- ═══ HEADER ═══ -->
+<div class="container">
+    <div class="page-header">
+        <h1>ROI Calculator</h1>
+        <p id="headerSubtitle">How much is your firm losing to slow intake, missed calls, and manual doc collection? Find out in 60 seconds.</p>
+    </div>
+</div>
+
+<!-- ═══ CALCULATOR ═══ -->
+<div class="section" id="calculator" style="padding-top: 0;">
+    <div class="container">
+        <div class="calc-grid">
+
+            <!-- LEFT: INPUTS -->
+            <div class="calc-inputs">
+                <h3 id="inputsTitle">Your Numbers</h3>
+                <span class="subtitle" id="inputsSubtitle">Adjust the sliders to match your firm. Watch the savings update in real time.</span>
+
+                <button class="reset-btn" onclick="resetDefaults()" id="resetBtn">&#8634; Reset to Defaults</button>
+
+                <div class="divider-label">Lead Volume &amp; Conversion</div>
+
+                <div class="slider-group">
+                    <label>
+                        <span>Leads per week<span class="slider-hint">Total inbound inquiries</span></span>
+                        <span class="slider-value" id="val-leads">40</span>
+                    </label>
+                    <input type="range" id="leads" min="10" max="200" value="40" step="1">
+                    <div class="slider-range-labels"><span>10</span><span>200</span></div>
+                </div>
+
+                <div class="slider-group">
+                    <label>
+                        <span>Hire rate (%)<span class="slider-hint">Leads that become paying clients</span></span>
+                        <span class="slider-value" id="val-hireRate">35%</span>
+                    </label>
+                    <input type="range" id="hireRate" min="10" max="80" value="35" step="1">
+                    <div class="slider-range-labels"><span>10%</span><span>80%</span></div>
+                </div>
+
+                <div class="divider-label">Fee Structure</div>
+
+                <div class="slider-group">
+                    <label>
+                        <span>Average Ch.7 fee<span class="slider-hint">Per-case attorney fee</span></span>
+                        <span class="slider-value" id="val-ch7Fee">$1,500</span>
+                    </label>
+                    <input type="range" id="ch7Fee" min="500" max="5000" value="1500" step="50">
+                    <div class="slider-range-labels"><span>$500</span><span>$5,000</span></div>
+                </div>
+
+                <div class="slider-group">
+                    <label>
+                        <span>Average Ch.13 fee<span class="slider-hint">Per-case attorney fee</span></span>
+                        <span class="slider-value" id="val-ch13Fee">$3,500</span>
+                    </label>
+                    <input type="range" id="ch13Fee" min="1500" max="10000" value="3500" step="100">
+                    <div class="slider-range-labels"><span>$1,500</span><span>$10,000</span></div>
+                </div>
+
+                <div class="slider-group">
+                    <label>
+                        <span>Ch.7 vs Ch.13 split (% Ch.7)<span class="slider-hint">Your case type mix</span></span>
+                        <span class="slider-value" id="val-ch7Split">65%</span>
+                    </label>
+                    <input type="range" id="ch7Split" min="20" max="90" value="65" step="1">
+                    <div class="slider-range-labels"><span>20% Ch.7</span><span>90% Ch.7</span></div>
+                </div>
+
+                <div class="divider-label">Current Overhead</div>
+
+                <div class="slider-group">
+                    <label>
+                        <span>Receptionist monthly cost<span class="slider-hint">Answering service or FT staff</span></span>
+                        <span class="slider-value" id="val-receptionist">$3,500</span>
+                    </label>
+                    <input type="range" id="receptionist" min="0" max="8000" value="3500" step="100">
+                    <div class="slider-range-labels"><span>$0</span><span>$8,000</span></div>
+                </div>
+
+                <div class="slider-group">
+                    <label>
+                        <span>Intake staff monthly cost<span class="slider-hint">Intake coordinators / paralegals</span></span>
+                        <span class="slider-value" id="val-intakeStaff">$6,000</span>
+                    </label>
+                    <input type="range" id="intakeStaff" min="0" max="15000" value="6000" step="100">
+                    <div class="slider-range-labels"><span>$0</span><span>$15,000</span></div>
+                </div>
+
+                <div class="slider-group">
+                    <label>
+                        <span>Doc collection hours/week<span class="slider-hint">Staff time at $25/hr</span></span>
+                        <span class="slider-value" id="val-docHours">15 hrs</span>
+                    </label>
+                    <input type="range" id="docHours" min="0" max="40" value="15" step="1">
+                    <div class="slider-range-labels"><span>0 hrs</span><span>40 hrs</span></div>
+                </div>
+
+                <div class="slider-group">
+                    <label>
+                        <span>Current software stack / mo<span class="slider-hint">CRM, forms, scheduling, etc.</span></span>
+                        <span class="slider-value" id="val-software">$500</span>
+                    </label>
+                    <input type="range" id="software" min="0" max="3000" value="500" step="50">
+                    <div class="slider-range-labels"><span>$0</span><span>$3,000</span></div>
+                </div>
+
+                <div class="divider-label">Lost Revenue</div>
+
+                <div class="slider-group">
+                    <label>
+                        <span>Missed after-hours leads / mo<span class="slider-hint">Calls that go to voicemail</span></span>
+                        <span class="slider-value" id="val-missedLeads">10</span>
+                    </label>
+                    <input type="range" id="missedLeads" min="0" max="50" value="10" step="1">
+                    <div class="slider-range-labels"><span>0</span><span>50</span></div>
+                </div>
+
+                <div class="slider-group">
+                    <label>
+                        <span>Client drop-offs from slow intake / mo<span class="slider-hint">Signed but never completed docs</span></span>
+                        <span class="slider-value" id="val-dropOffs">3</span>
+                    </label>
+                    <input type="range" id="dropOffs" min="0" max="20" value="3" step="1">
+                    <div class="slider-range-labels"><span>0</span><span>20</span></div>
+                </div>
+
+                <div class="divider-label">NB OS Investment</div>
+
+                <div class="slider-group" style="border-bottom:none; margin-bottom:0; padding-bottom:0.5rem;">
+                    <label>
+                        <span>NB OS monthly cost<span class="slider-hint">Standard ($497) or Enterprise ($997)</span></span>
+                        <span class="slider-value" id="val-nbosCost">$497</span>
+                    </label>
+                    <input type="range" id="nbosCost" min="497" max="997" value="497" step="500">
+                    <div class="slider-range-labels"><span>Standard $497</span><span>Enterprise $997</span></div>
+                </div>
+            </div>
+
+            <!-- RIGHT: RESULTS -->
+            <div class="calc-results">
+                <div class="result-card primary">
+                    <span class="result-label">Monthly Revenue (current)</span>
+                    <span class="result-value" id="out-revenue">--</span>
+                </div>
+                <div class="result-card warning">
+                    <span class="result-label">Current Monthly Overhead</span>
+                    <span class="result-value" id="out-overhead">--</span>
+                </div>
+                <div class="result-card warning">
+                    <span class="result-label">Monthly Revenue Lost</span>
+                    <span class="result-value" id="out-lostRevenue">--</span>
+                </div>
+                <div class="result-card warning" style="border-left-color: #c0392b; border-left-width: 4px;">
+                    <span class="result-label">Total Monthly Cost of Status Quo</span>
+                    <span class="result-value" id="out-totalCost" style="color:#c0392b;">--</span>
+                </div>
+
+                <div style="height: 1rem;"></div>
+
+                <div class="result-card nbos-cost">
+                    <span class="result-label">NB OS Monthly Cost</span>
+                    <span class="result-value" id="out-nbosCost" style="color:var(--stormy-teal);">--</span>
+                </div>
+                <div class="result-card highlight">
+                    <span class="result-label">Net Monthly Savings</span>
+                    <span class="result-value" id="out-monthlySavings">--</span>
+                </div>
+                <div class="result-card highlight" style="border-left-color: var(--stormy-teal);">
+                    <span class="result-label">Annual Savings</span>
+                    <span class="result-value" id="out-annualSavings" style="color:var(--stormy-teal);">--</span>
+                </div>
+                <div class="result-card primary">
+                    <span class="result-label">Return on Investment</span>
+                    <span class="result-value" id="out-roi">--</span>
+                </div>
+                <div class="result-card primary" style="border-left-color: var(--celadon);">
+                    <span class="result-label">Payback Period</span>
+                    <span class="result-value" id="out-payback" style="color:var(--stormy-teal);">--</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ CHART ═══ -->
+        <div class="chart-wrap">
+            <h3>12-Month Projection</h3>
+            <p style="font-size:0.9rem; color:#888; margin-bottom:1rem;">Cumulative savings vs. cumulative NB OS cost over one year</p>
+            <div class="chart-container">
+                <canvas id="projectionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- ═══ SUMMARY CARDS ═══ -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-number" id="sum-monthly">--</div>
+                <div class="summary-label">Monthly Savings</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number" id="sum-annual">--</div>
+                <div class="summary-label">Annual Savings</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number" id="sum-roi">--</div>
+                <div class="summary-label">Return on Investment</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number" id="sum-payback">--</div>
+                <div class="summary-label">Payback (Days)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ CTA ═══ -->
+<div class="section-blue" id="contact">
+    <div class="container cta-section">
+        <h2>Ready to Capture These Savings?</h2>
+        <p style="opacity:0.85; max-width:550px; margin:0 auto 2rem;">These numbers are conservative. Real-world NB OS firms report 20-40% revenue lifts from faster intake alone.</p>
+        <a id="ctaButton" href="https://ironnoodle.com" class="btn btn-white btn-lg" target="_blank">Book a Demo &rarr;</a>
+    </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer id="pageFooter" style="background:var(--carbon-black); color:rgba(255,255,255,0.5); text-align:center; padding:2rem; font-size:0.8rem;">
+    <p style="margin:0;">NB OS &mdash; Profit Engineering for Lawyers &mdash; <a href="https://ironnoodle.com" style="color:rgba(255,255,255,0.7)">Iron Noodle Technologies LLC</a></p>
+</footer>
+
+<script>
+(function() {
+    'use strict';
+
+    // ═══════════════════════════════════════════════════
+    // URL PARAMETER ENGINE
+    // Accepts: ?firm=Name&proposal=https://...&leads=80&hireRate=45...
+    // When proposal is set, nav becomes the client's proposal nav
+    // All slider params override defaults
+    // ═══════════════════════════════════════════════════
+    const params = new URLSearchParams(window.location.search);
+    const firmName = params.get('firm');
+    const proposalBase = params.get('proposal'); // e.g. https://skillboss-xyz-preview.heyboss.live
+
+    // ═══ DEFAULTS — overridable via URL params ═══
+    const GENERIC_DEFAULTS = {
+        leads: 40, hireRate: 35, ch7Fee: 1500, ch13Fee: 3500, ch7Split: 65,
+        receptionist: 3500, intakeStaff: 6000, docHours: 15, software: 500,
+        missedLeads: 10, dropOffs: 3, nbosCost: 497
+    };
+
+    const DEFAULTS = {};
+    const SLIDERS = Object.keys(GENERIC_DEFAULTS);
+    SLIDERS.forEach(function(key) {
+        var urlVal = params.get(key);
+        DEFAULTS[key] = urlVal ? parseFloat(urlVal) : GENERIC_DEFAULTS[key];
+    });
+
+    // Apply URL defaults to sliders
+    SLIDERS.forEach(function(key) {
+        var el = document.getElementById(key);
+        if (el) el.value = DEFAULTS[key];
+    });
+
+    // ═══ PERSONALIZE UI ═══
+    if (firmName) {
+        document.getElementById('pageTitle').textContent = 'ROI Calculator — ' + firmName + ' | NB OS';
+        document.getElementById('navFirmLabel').innerHTML = '<span style="opacity:0.6;font-size:0.8rem;font-weight:400">&times; ' + firmName + '</span>';
+        document.getElementById('headerSubtitle').textContent = firmName + ' — adjust the sliders to see your projected savings with NB OS';
+        document.getElementById('inputsTitle').textContent = 'Your Numbers';
+        document.getElementById('inputsSubtitle').textContent = 'Pre-filled with ' + firmName + ' estimates. Drag to adjust.';
+        document.getElementById('resetBtn').textContent = '\u21BA Reset to ' + firmName + ' Defaults';
+        document.getElementById('pageFooter').innerHTML = '<p style="margin:0">NB OS by Iron Noodle Technologies &mdash; Prepared for ' + firmName + '</p>';
+    }
+
+    // ═══ BUILD NAV ═══
+    var navLinks = document.getElementById('navLinks');
+    if (proposalBase) {
+        // Client proposal mode — mirror the proposal site nav
+        var base = proposalBase.replace(/\/$/, '');
+        navLinks.innerHTML =
+            '<a href="' + base + '/index.html">Pitch</a>' +
+            '<a href="#calculator" class="active">ROI Calculator</a>' +
+            '<a href="' + base + '/proposal.html">Proposal</a>' +
+            '<a href="' + base + '/one-pager.html">One-Pager</a>';
+
+        // CTA links to proposal instead of generic ironnoodle.com
+        document.getElementById('ctaButton').href = base + '/proposal.html';
+        document.getElementById('ctaButton').textContent = 'View the Proposal \u2192';
+        document.getElementById('ctaButton').removeAttribute('target');
+    } else {
+        // Generic mode — Iron Noodle public links
+        navLinks.innerHTML =
+            '<a href="https://ironnoodle.com">Iron Noodle</a>' +
+            '<a href="#calculator" class="active">ROI Calculator</a>' +
+            '<a href="#contact">Get Started</a>';
+    }
+
+    // ═══ FORMAT HELPERS ═══
+    function fmt(n) {
+        if (n < 0) return '-' + fmt(-n);
+        return '$' + Math.round(n).toLocaleString('en-US');
+    }
+    function fmtK(n) {
+        if (Math.abs(n) >= 1000000) return '$' + (n / 1000000).toFixed(1) + 'M';
+        if (Math.abs(n) >= 10000) return '$' + Math.round(n / 1000) + 'K';
+        return fmt(n);
+    }
+
+    // ═══ CHART SETUP ═══
+    var ctx = document.getElementById('projectionChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Month 1','Month 2','Month 3','Month 4','Month 5','Month 6','Month 7','Month 8','Month 9','Month 10','Month 11','Month 12'],
+            datasets: [
+                {
+                    label: 'Cumulative Savings',
+                    data: [], borderColor: '#7CCCA0', backgroundColor: 'rgba(124, 204, 160, 0.12)',
+                    borderWidth: 3, pointRadius: 4, pointBackgroundColor: '#7CCCA0',
+                    pointBorderColor: '#fff', pointBorderWidth: 2, tension: 0.3, fill: true
+                },
+                {
+                    label: 'Cumulative NB OS Cost',
+                    data: [], borderColor: '#0A1EF5', backgroundColor: 'rgba(10, 30, 245, 0.06)',
+                    borderWidth: 3, pointRadius: 4, pointBackgroundColor: '#0A1EF5',
+                    pointBorderColor: '#fff', pointBorderWidth: 2, tension: 0.3, fill: true, borderDash: [6, 3]
+                }
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { position: 'top', labels: { font: { family: "'Inter', sans-serif", size: 13 }, usePointStyle: true, padding: 20 } },
+                tooltip: {
+                    backgroundColor: '#191718',
+                    titleFont: { family: "'Oswald', sans-serif", size: 14, weight: '600' },
+                    bodyFont: { family: "'Inter', sans-serif", size: 13 },
+                    padding: 12, cornerRadius: 8,
+                    callbacks: { label: function(context) { return context.dataset.label + ': ' + fmt(context.parsed.y); } }
+                }
+            },
+            scales: {
+                x: { grid: { display: false }, ticks: { font: { family: "'Inter', sans-serif", size: 11 }, color: '#999' } },
+                y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { family: "'Inter', sans-serif", size: 11 }, color: '#999', callback: function(value) { return fmtK(value); } } }
+            }
+        }
+    });
+
+    var displayFormatters = {
+        leads: function(v){return v}, hireRate: function(v){return v + '%'}, ch7Fee: function(v){return fmt(v)}, ch13Fee: function(v){return fmt(v)},
+        ch7Split: function(v){return v + '%'}, receptionist: function(v){return fmt(v)}, intakeStaff: function(v){return fmt(v)},
+        docHours: function(v){return v + ' hrs'}, software: function(v){return fmt(v)}, missedLeads: function(v){return v},
+        dropOffs: function(v){return v}, nbosCost: function(v){return fmt(v)}
+    };
+
+    function calculate() {
+        var v = {};
+        SLIDERS.forEach(function(id) {
+            v[id] = parseFloat(document.getElementById(id).value);
+            var el = document.getElementById('val-' + id);
+            if (el) el.textContent = displayFormatters[id](v[id]);
+        });
+
+        var blendedFee = (v.ch7Fee * v.ch7Split / 100) + (v.ch13Fee * (1 - v.ch7Split / 100));
+        var weeklyClients = v.leads * v.hireRate / 100;
+        var monthlyRevenue = weeklyClients * 4.33 * blendedFee;
+        var currentOverhead = v.receptionist + v.intakeStaff + (v.docHours * 4.33 * 25) + v.software;
+        var lostRevenue = (v.missedLeads * blendedFee * 0.45) + (v.dropOffs * blendedFee);
+        var totalCostStatusQuo = currentOverhead + lostRevenue;
+        var monthlySavings = totalCostStatusQuo - v.nbosCost;
+        var annualSavings = monthlySavings * 12;
+        var roiPercent = (v.nbosCost > 0) ? (annualSavings / (v.nbosCost * 12)) * 100 : 0;
+        var paybackDays = (monthlySavings > 0) ? v.nbosCost / (monthlySavings / 30) : Infinity;
+
+        document.getElementById('out-revenue').textContent = fmt(monthlyRevenue);
+        document.getElementById('out-overhead').textContent = fmt(currentOverhead);
+        document.getElementById('out-lostRevenue').textContent = fmt(lostRevenue);
+        document.getElementById('out-totalCost').textContent = fmt(totalCostStatusQuo);
+        document.getElementById('out-nbosCost').textContent = fmt(v.nbosCost);
+        document.getElementById('out-monthlySavings').textContent = fmt(monthlySavings);
+        document.getElementById('out-annualSavings').textContent = fmt(annualSavings);
+        document.getElementById('out-roi').textContent = Math.round(roiPercent).toLocaleString('en-US') + '%';
+        document.getElementById('out-payback').textContent = paybackDays === Infinity ? '--' : Math.round(paybackDays) + ' days';
+
+        document.getElementById('sum-monthly').textContent = fmtK(monthlySavings);
+        document.getElementById('sum-annual').textContent = fmtK(annualSavings);
+        document.getElementById('sum-roi').textContent = Math.round(roiPercent).toLocaleString('en-US') + '%';
+        document.getElementById('sum-payback').textContent = paybackDays === Infinity ? '--' : Math.round(paybackDays) + ' days';
+
+        var savingsData = [], costData = [];
+        for (var m = 1; m <= 12; m++) {
+            savingsData.push(Math.round(totalCostStatusQuo * m));
+            costData.push(Math.round(v.nbosCost * m));
+        }
+        chart.data.datasets[0].data = savingsData;
+        chart.data.datasets[1].data = costData;
+        chart.update('none');
+    }
+
+    SLIDERS.forEach(function(id) { document.getElementById(id).addEventListener('input', calculate); });
+
+    window.resetDefaults = function() {
+        SLIDERS.forEach(function(id) { document.getElementById(id).value = DEFAULTS[id]; });
+        calculate();
+    };
+
+    calculate();
+})();
+</script>
+
+</body>
+</html>
